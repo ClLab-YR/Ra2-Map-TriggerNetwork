@@ -40,9 +40,15 @@ class MapFile:
                 self.localvar[pair.Name] = variable
 
     def Calculate(self):
+        # may ignore variables interaction.
+        eventids = [36, 37,  # original
+                    500, 501, 502, 503, 504, 505]
+        actionids = [56, 57,  # original
+                     501, 502,]  # ext
+
         for trigger in self.triggers.values():
             for event in trigger.events:
-                if event.eventid == 36 or event.eventid == 37:
+                if event.eventid in eventids:
                     self.AddLocal(event.parameters[1])
                     self.AddTrigger(trigger.id)
                     trigger.readlocals.append(event.parameters[1])
@@ -53,7 +59,7 @@ class MapFile:
                     self.AddTrigger(action.parameters[1])
                     self.AddTrigger(trigger.id)
                     trigger.movedtriggers.append(action.parameters[1])
-                if action.actionid in [56, 57]:
+                if action.actionid in actionids:
                     self.AddLocal(action.parameters[1])
                     self.AddTrigger(trigger.id)
                     trigger.setlocals.append(action.parameters[1])
